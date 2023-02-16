@@ -1,150 +1,121 @@
-import random
+import doctest
 
-class Fighter:
-    """
-    Документация на класс.
-    Класс описывает героя Воина.
-    """
 
-    def __init__(self, name: str, lvl: int, strength: int, ExperiencePoints: int):
+class Book:
+    """ Базовый класс книги. """
+
+    def __init__(self, name: str, author: str):
         """
         Инициализация экземпляра класса.
-        :param name: Имя героя
-        :param lvl: Уровень героя
-        :param strength: Сила героя
-        :param ExperiencePoints: Опыт героя
+        :param name: Название книги
+        :param author: Автор книги
+
+        Пример:
+        >>> test_book = Book("Пиши, сокращай", "М. Ильяхов")
         """
-        if not isinstance(name, str):
-            raise TypeError("Имя должно быть типа str")
-        self.name = name
-
-        if not isinstance(lvl, int):
-            raise TypeError("Уровень должен быть типа int")
-        if lvl <= 0:
-            raise ValueError("Уровень должен быть положительным числом")
-        self.lvl = lvl
-
-        if not isinstance(strength, int):
-            raise TypeError("Сила должна быть типа int")
-        if strength <= 0:
-            raise ValueError("Сила должна быть положительным числом")
-        self.strength = strength
-
-        if not isinstance(ExperiencePoints, int):
-            raise TypeError("Опыт должен быть типа int")
-        if ExperiencePoints < 0:
-            raise ValueError("Опыт не может быть отрицательным числом")
-        self.ExperiencePoints = ExperiencePoints
+        self._name = name
+        self._author = author
 
     def __str__(self):
         """
         Метод возвращает строку для чтения.
+
+        Пример:
+        >>> test_book = Book("Пиши, сокращай", "М. Ильяхов")
+        >>> print(test_book)
         """
-        return f"Воин {self.name}; Уровень {self.lvl}; Сила {self.strength}; Опыт {self.ExperiencePoints}"
+        return f"Книга {self.name}; Автор {self.author}"
 
     def __repr__(self):
         """
         Метод возвращает строку, показывающую, как может быть инициализирован экземпляр.
-        """
-        return f"{self.__class__.__name__}(Имя={self.name!r}, Уровень={self.lvl!r}, Сила={self.strength!r}, Опыт={self.ExperiencePoints!r})"
 
-    def lvl_up(self):
+        Пример:
+        >>> test_book = Book("Пиши, сокращай", "М. Ильяхов")
+        >>> print(repr(test_book))
         """
-        Метод определяет уровень героя по имеющемуся опыту.
-        """
-        Experience_of_lvl = [0, 300, 900, 2700, 6500, 14400, 23000, 34000, 48000, 64000, 85000, 100000]
-        for exp in Experience_of_lvl:
-            if self.ExperiencePoints < exp:
-                self.lvl = Experience_of_lvl.index(exp)
-                print("Уровень героя", self.lvl)
-                break
-        return self.lvl
+        return f"{self.__class__.__name__}(name={self.name!r}, author={self.author!r})"
 
-    def exp_up(self, Experience: int):
-        """
-        Метод увеличивает количество имеющегося опыта.
-        """
-        self.Experience = Experience
-        self.ExperiencePoints += self.Experience
-        print("Получено опыта", self.ExperiencePoints)
-        return self.ExperiencePoints
+    @property
+    def name(self):
+        return self._name
 
-    def attack(self):
+    @property
+    def author(self):
+        return self._author
+
+class PaperBook(Book):
+    """ Класс бумажной книги. Является подклассом базовой книги """
+
+    def __init__(self, name: str, author: str, pages: int):
         """
-        Метод позволяет провести атаку по цели. Удар считается успешным, если число на кубике больше 10.
+        Инициализация экземпляра класса.
+        :param name: Название книги
+        :param author: Автор книги
+        :param pages: Количество страниц книги
+
+        Пример:
+        >>> test_paper = PaperBook("Пиши, сокращай", "М. Ильяхов", 200)
         """
-        hit = random.randint(1, 20)
-        print("Бросаем кубик... Выпало:", hit)
-        if hit > 10:
-            print("Попадание")
+        super().__init__(name, author)
+        if isinstance(pages, int):
+            if pages > 0:
+                self.pages = pages
+            else:
+                raise ValueError("Число страниц должно быть положительным числом")
         else:
-            print("Промах")
-
-class Knight(Fighter):
-    """
-    Документация на дочерний класс.
-    Класс описывает подкласс героя Воина -- Рыцаря.
-    """
-    def __init__(self, name: str, lvl: int, strength: int, ExperiencePoints: int, Inspiration = None):
-        """
-        Инициализация экземпляра подкласса.
-        :param name: Имя героя
-        :param lvl: Уровень героя
-        :param strength: Сила героя
-        :param ExperiencePoints: Опыт героя
-        :param Inspiration: Вдохновение. Приравнивается уровню или задаётся вручную.
-        """
-        super().__init__(name, lvl, strength, ExperiencePoints)
-        if Inspiration is None:
-            Inspiration = self.lvl
-        self.Inspiration = Inspiration
-
-        if not isinstance(Inspiration, int):
-            raise TypeError("Вдохновение должно быть типа int")
-        if Inspiration <= 0:
-            raise ValueError("Вдохновение должно быть положительным числом")
+            raise TypeError("Количество страниц должно быть типа int")
 
     def __str__(self):
         """
-        Метод возвращает строку для чтения.
-        Перегрузку метода реализовали из-за необходимости указания подкласса героя.
+        Метод возвращает строку для чтения. Метод был перегружен в связи с появлением нового атрибута.
+
+        Пример:
+        >>> test_paper = PaperBook("Пиши, сокращай", "М. Ильяхов", 200)
+        >>> print(test_paper)
         """
         s_str = super().__str__()
-        return f"{s_str}; Подкласс: {self.__class__.__name__}"
+        return f"{s_str}; Страниц {self.pages}"
 
-    def __repr__(self):
-        """
-        Метод возвращает строку, показывающую, как может быть инициализирован экземпляр.
-        Перегрузку метода реализовали из-за необходимости указания подкласса героя.
-        """
-        s_repr = super().__repr__()
-        return f"{s_repr}; Подкласс={self.__class__.__name__!r}"
 
-    def attack(self):
+class AudioBook(Book):
+    """ Класс аудио книги. Является подклассом базовой книги """
+
+    def __init__(self, name: str, author: str, duration: float):
         """
-        Метод позволяет провести атаку по цели. Удар считается успешным, если число на кубике больше 10.
-        Перегрузка метода реализовали из-за того, что подкласс Рыцарь имеет возможность провести второй удар.
+        Инициализация экземпляра класса.
+        :param name: Название книги
+        :param author: Автор книги
+        :param duration: Продолжительность аудио книги
+
+        Пример:
+        >>> test_audio = AudioBook("Пиши, сокращай", "М. Ильяхов", 200.00)
         """
-        s_attack = super().attack()
-        hit_2 = random.randint(1, 20)
-        print("Будешь проводить ещё один удар?")
-        answer = input()
-        if answer == "Да":
-            print("Бросаем кубик... Выпало:", hit_2)
-            if hit_2 > 10:
-                print("Попадание")
+        super().__init__(name, author)
+        if isinstance(duration, float):
+            if duration > 0:
+                self.duration = duration
             else:
-                print("Промах")
-        elif answer == "Нет":
-            print("Дополнительную атаку не провели")
+                raise ValueError("Продолжительность должна быть положительным числом")
         else:
-            print("Не могу тебя понять")
+            raise TypeError("Продолжительность должно быть типа float")
+
+    def __str__(self):
+        """
+        Метод возвращает строку для чтения. Метод был перегружен в связи с появлением нового атрибута.
+
+        Пример:
+        >>> test_audio = AudioBook("Пиши, сокращай", "М. Ильяхов", 200.00)
+        >>> print(test_audio)
+        """
+        s_str = super().__str__()
+        return f"{s_str}; Продолжительность {self.duration}"
 
 if __name__ == "__main__":
-    Fighter = Fighter("Джеймс", 1, 16, 0)
-    #Fighter.lvl_up()
-    #Fighter.exp_up(1000)
-    Knight = Knight("Джеймс", 3, 16, 899)
-    #Knight.attack()
+
+    test_book = Book("Пиши, сокращай", "М. Ильяхов")
+    test_paper = PaperBook("Пиши, сокращай", "М. Ильяхов", 200)
+    test_audio = AudioBook("Пиши, сокращай", "М. Ильяхов", 200.00)
+    doctest.testmod()
     pass
 
