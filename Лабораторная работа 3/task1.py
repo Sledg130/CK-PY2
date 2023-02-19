@@ -117,7 +117,6 @@ class AudioBook(Book):
         return f"{self.__class__.__name__}(name = {self._name!r}, author = {self._author!r}, duration = {self._duration!r})"
 
 if __name__ == "__main__":
-
     test_book = Book("Пиши, сокращай", "М. Ильяхов")
     test_paper = PaperBook("Пиши, сокращай", "М. Ильяхов", 200)
     test_audio = AudioBook("Пиши, сокращай", "М. Ильяхов", 200.00)
